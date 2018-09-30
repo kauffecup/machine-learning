@@ -13290,17 +13290,17 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Minimum price of the data</span>
-<span class="n">minimum_price</span> <span class="o">=</span> <span class="n">prices</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">minimum_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
 <span class="c1"># Maximum price of the data</span>
-<span class="n">maximum_price</span> <span class="o">=</span> <span class="n">prices</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">maximum_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
 <span class="c1"># Mean price of the data</span>
-<span class="n">mean_price</span> <span class="o">=</span> <span class="n">prices</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">mean_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
 
 <span class="c1"># Median price of the data</span>
 <span class="n">median_price</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">prices</span><span class="p">)</span>
@@ -13370,18 +13370,26 @@ Standard deviation of prices: $165,171.13
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
-<p>Intuitively, we anticipate that increases in the following variables will affect <code>MEDV</code> in the following:</p>
+<p>Intuitively, we anticipate that increases in the following variables will affect <code>MEDV</code> in the following ways:</p>
 <ul>
 <li>As <code>RM</code> increases, <code>MEDV</code> increases<ul>
 <li>Houses with more rooms typically are worth more</li>
+<li>More rooms imply a larger overall square footage of the house which in turn increases its value (holding everything else constant)</li>
 </ul>
 </li>
+</ul>
+<ul>
 <li>As <code>LSAT</code> increases, <code>MEDV</code> decreases<ul>
 <li>A higher <code>LSAT</code> makes the neighborhood less desirable, thus decreasing prices</li>
+<li>As the number of low class workers in a neighborhood increase, the neighborhood itself becomes less desirable, and when the neighborhood is less desirable, the prices in that neighborhood are lower</li>
 </ul>
 </li>
+</ul>
+<ul>
 <li>As <code>PTRATIO</code> increases, <code>MEDV</code> decreases<ul>
 <li>A lower <code>PTRATIO</code> is more desirable, thus increasing demand and prices</li>
+<li>A lower <code>PTRATIO</code> implies the schools in that neighborhood are better. With a lower <code>PTRATIO</code>, we know each student gets more individual attention which studies have shown increase their overall success. This is a very attractive feature in a neighborhood, and demand for that increases demand for the neighborhood, which results in homes being worth more (holding everything else constant)</li>
+<li>Conversely, a higher <code>PTRATIO</code> is less desirable; students get less individual attention, which makes demand for the neighborhood lower. Thus we anticipate that has <code>PTRATIO</code> increases, <code>MEDV</code> decreases</li>
 </ul>
 </li>
 </ul>
@@ -13525,7 +13533,13 @@ Standard deviation of prices: $165,171.13
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
-<p>With an R2 score of 0.923, 92.3% of the variance in Y is predictable from X. This seems high and thus the model successfully captures the variation of the target variable. Since we're only looking at 5 points though, this result may not be statistically significant.</p>
+<p>The model successfully captures the variation of the target variable. With an R2 score of 1 we can say that the model perfectly fits the data. With an R2 score of 0.923, 92.3% of the variance in Y is predictable from X. This seems high and thus the model successfully captures the variation of the target variable.</p>
+<p>There are two caveats, however:</p>
+<ol>
+<li>Since we're only looking at 5 points though, this result may not be statistically significant.</li>
+<li>Just looking at these 5 points out of context doesn't give us indication of if 0.923 is good or bad. In general, 0.923 is good and we can say that this model is a good fit, but there are potential applications where we're looking for a higher R2 score</li>
+</ol>
+<p>In general, R2 is a measure of goodness of fit because the more variance that is accounted for by the regression, the closer the data points will be to the regression line. With a very low R2, the data points will fall far from the regression line and have a much lower R2 score. With a very high R2 (as is the case with this example) the data points will fall very close to the regression line and we can say that model is a good fit.</p>
 
 </div>
 </div>
@@ -13911,9 +13925,11 @@ Think about the pros and cons of adding more training points based on if the tra
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
-<p>Cross-validation enables us to test different models without "cheating" by using the testing set to make decisions. In cross-validation, we break our data into 3 subsets: 1 to be used for training different models, 1 to perform cross-validation on the models, and 1 to perform the final testing. This, however, can result in biasing our model as we're training it on a smaller subset of data.</p>
-<p>K-Fold Cross-validation addresses this issue. In K-Fold Cross-Validation we break our data into K subsets. Then we train our model K times, each time changing which subset is the testing set, and use the remaining buckets as the training set, then we average the results to get the final model.</p>
-<p>Using this in combination with grid search, truly allows us to optimize and fine tune our models. Grid search gives us an optimized set of parameters for a particular subset of data used for training, but this runs the risk of overfitting and memorizing that particular set of data. Using K-Fold Cross-validation, we find the optimized set of parameters for K different subsets of the same data, then averaging these parameters will give us a truly general model.</p>
+<p>In K-Fold Cross Validation, we split our data (as before) into a training and testing set. We then split our testing set into K subsets or "folds," and train our data on K-1 folds using the remaining fold for cross validation. We repeat this process K times, each time using a different "fold" as our cross validation set. Once this is done, the average cross validation score is then used to check the final performance of the model.</p>
+<p>The benefits of this are that the model we end up selecting will generalize better to data outside of the testing set; this is because this technique has reduced variance then if we just split into a training and testing set. The other benefits are that we create K folds and use each fold as a cross validation set in a different run. If we didn't use K-Fold Cross Validation, and just used normal cross validation (or K=1), then we'd be at risk of optimizing our model against that set and having a model that does not generalize to the testing set.</p>
+<p>The reason why we use cross validation at all is to have a set of data to test our model against after we train it on the training set. We do not use the testing set for this because that breaks the golden rule; we should never use the testing set to make decisions about our model.</p>
+<p>If we did not use a cross validation set and used grid search we would be at high risk of our optimized model having high variance, overfitting, and memorizing the testing set. In this situation, grid search could produce a hyper optimized model that does well on the testing set but does not generalize.</p>
+<p>Using K-Fold Cross Validation in combination with grid search allows us to reduce variance while optimizing parameters in a way that will generalize to data outside of the testing set.</p>
 
 </div>
 </div>
@@ -13948,7 +13964,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.tree</span> <span class="k">import</span> <span class="n">DecisionTreeRegressor</span>
@@ -13974,7 +13990,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
     <span class="c1"># Create the grid search cv object --&gt; GridSearchCV()</span>
     <span class="c1"># Make sure to include the right parameters in the object:</span>
     <span class="c1"># (estimator, param_grid, scoring, cv) which have values &#39;regressor&#39;, &#39;params&#39;, &#39;scoring_fnc&#39;, and &#39;cv_sets&#39; respectively.</span>
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">scoring_fnc</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">scoring</span><span class="o">=</span><span class="n">scoring_fnc</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv_sets</span><span class="p">)</span>
 
     <span class="c1"># Fit the grid search object to the data to compute the optimal model</span>
     <span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -14009,7 +14025,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Fit the training data to the model using grid search</span>
@@ -14033,7 +14049,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Parameter &#39;max_depth&#39; is 5 for the optimal model.
+<pre>Parameter &#39;max_depth&#39; is 4 for the optimal model.
 </pre>
 </div>
 </div>
@@ -14047,7 +14063,8 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Hint:</strong> The answer comes from the output of the code snipped above.</p>
 <p><strong>Answer:</strong></p>
-<p>The optimal model has a maximum depth of 5</p>
+<p>The optimal model has a maximum depth of 4, which is the same as my guess in question 6</p>
+<p>Our intuition about the performance of the models based on the performance curve was correct! Beyond a depth of 4 the model suffers from overfitting and memorizing the data, and below a depth of 4 the model suffers from underfitting the data. At a maximum depth of 4, our model performs well on both the training and testing set but generalizes well.</p>
 
 </div>
 </div>
@@ -14097,7 +14114,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Produce a matrix for client data</span>
@@ -14124,9 +14141,9 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Predicted selling price for Client 1&#39;s home: $387,927.27
-Predicted selling price for Client 2&#39;s home: $230,316.28
-Predicted selling price for Client 3&#39;s home: $878,220.00
+<pre>Predicted selling price for Client 1&#39;s home: $403,025.00
+Predicted selling price for Client 2&#39;s home: $237,478.72
+Predicted selling price for Client 3&#39;s home: $931,636.36
 </pre>
 </div>
 </div>
@@ -14139,9 +14156,9 @@ Predicted selling price for Client 3&#39;s home: $878,220.00
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer:</strong></p>
-<p>Predicted selling price for Client 1's home: $387,927.27</p>
-<p>Predicted selling price for Client 2's home: $230,316.28</p>
-<p>Predicted selling price for Client 3's home: $878,220.00</p>
+<p>Predicted selling price for Client 1's home: $403,025.00</p>
+<p>Predicted selling price for Client 2's home: $237,478.72</p>
+<p>Predicted selling price for Client 3's home: $931,636.36</p>
 <p>Given the houses' respective features, these values seem very reasonable. Client 3 has the largest house, in the best public school neighborhodd with the lowest poverty level and has the highest recommended price by far. Client 2 has the smallest house, in a neighborhood with a relatively high poverty rate, and not the best public schools and has the lowest recommended price. Client 1's  house is a little larger than Client 2's and the poverty level and public schools are between that of Client and 2 and Client 3, and their recommended price reflects that.</p>
 
 </div>
@@ -14158,7 +14175,7 @@ Predicted selling price for Client 3&#39;s home: $878,220.00
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">PredictTrials</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">prices</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">client_data</span><span class="p">)</span>
@@ -14178,18 +14195,18 @@ Predicted selling price for Client 3&#39;s home: $878,220.00
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Trial 1: $409,500.00
-Trial 2: $411,417.39
+<pre>Trial 1: $391,183.33
+Trial 2: $419,700.00
 Trial 3: $415,800.00
-Trial 4: $428,316.00
-Trial 5: $413,334.78
+Trial 4: $420,622.22
+Trial 5: $418,377.27
 Trial 6: $411,931.58
 Trial 7: $399,663.16
 Trial 8: $407,232.00
-Trial 9: $402,531.82
+Trial 9: $351,577.61
 Trial 10: $413,700.00
 
-Range in prices: $28,652.84
+Range in prices: $69,044.61
 </pre>
 </div>
 </div>
@@ -14225,7 +14242,7 @@ Range in prices: $28,652.84
 <li>The model was trained on very old data. So much has changed since 1978 including demographics, property &amp; housing values, and inflation</li>
 <li>The model was only trained on 3 features which aren't sufficient to describe a home. Instead of number of rooms, square footage might be a better descriptor. It should also factor in the size of the plot and the year the house was constructed. Additionally, we should try to find a feature that objectively describes the overall "niceness" of the house - whether that be quality of appliances, or quality of floors or cabinets, or try to capture the net cost of renovations that have been invested into the home</li>
 <li>The features also don't sufficiently describe a neighborhood. There are more features that should be included here like population density, access to public transportation, number of parks, crime rates, education of population, and affluency of local businesses.</li>
-<li>The model also isn't robust enough to make consistent predictions. The range in suggested prices output from 10 different training and testing sets has a variance of nearly $30,000 which is higher than I would've liked to see</li>
+<li>The model also isn't robust enough to make consistent predictions. The range in suggested prices output from 10 different training and testing sets has a variance of nearly $70,000 which is higher than I would've liked to see</li>
 <li>Certainly neighborhood characteristics should factor into the cost of the home, but the proportion of features should be balanced; having 2 features reflecting neighborhood descriptors and only 1 reflecting the house doesn't feel balanced. Intuitively these should either be 1:1 or weighted to have more features reflecting the house.</li>
 </ul>
 
